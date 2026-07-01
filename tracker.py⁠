@@ -51,3 +51,4 @@ def generate_dashboard():
         processed_data.append({
             "state": g['state'], "name": g['name'], "price": g['price'],
             "left": g['left'], "total": g['total'], "rec": rec,
+
