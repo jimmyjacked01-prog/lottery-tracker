@@ -1,0 +1,53 @@
+import json
+import requests
+from bs4 import BeautifulSoup
+
+HEADERS = {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36"
+}
+
+def calculate_ev_metrics(prizes_left, total_prizes):
+    if total_prizes == 0:
+        return "UNKNOWN", 0.0
+    if prizes_left == 0:
+        return "❌ AVOID (Dead Game)", 0.0
+        
+    ratio = prizes_left / total_prizes
+    score = ratio
+    
+    if ratio >= 0.66:
+        rec = "🔥 STRONG BUY"
+    elif ratio >= 0.33:
+        rec = "✅ BUY"
+    else:
+        rec = "⚠️ CAUTION"
+        
+    return rec, score
+
+def scrape_arkansas():
+    return [] 
+def scrape_oklahoma():
+    return []
+def scrape_missouri():
+    return []
+
+def generate_dashboard():
+    games = []
+    games.extend(scrape_arkansas())
+    games.extend(scrape_oklahoma())
+    games.extend(scrape_missouri())
+    
+    # Fallback data so you can test the UI immediately
+    if not games:
+        games = [
+            {"state": "AR", "name": "$50,000 Blowout", "price": "$20", "left": 4, "total": 5, "img": "https://via.placeholder.com/150/c8102E/FFFFFF?text=AR+Ticket"},
+            {"state": "OK", "name": "Extreme Green", "price": "$10", "left": 0, "total": 3, "img": "https://via.placeholder.com/150/0072CE/FFFFFF?text=OK+Ticket"},
+            {"state": "MO", "name": "Show Me Cash", "price": "$5", "left": 2, "total": 6, "img": "https://via.placeholder.com/150/004d40/FFFFFF?text=MO+Ticket"}
+        ]
+
+    processed_data = []
+    for g in games:
+        rec, score = calculate_ev_metrics(g['left'], g['total'])
+        processed_data.append({
+            "state": g['state'], "name": g['name'], "price": g['price'],
+            "left": g['left'], "total": g['total'], "rec": rec,
